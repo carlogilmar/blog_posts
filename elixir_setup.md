@@ -40,15 +40,17 @@ There are _many more_ things Mix can do. It is possible to see the list with `$m
 
 ## Credo
 
-Credo it's an [elixir dependency](https://github.com/rrrene/credo) for check code consistency. When you run Credo inside your project you will see: consistency issues, refactoring opportunities, warnings, improves in software design and code readability. This will help you to improve your code consistency, you can know more about in the [style guide](https://github.com/rrrene/elixir-style-guide) implemented in Credo. 
+[Credo](https://github.com/rrrene/credo) it's an useful dependency focused on the code consistency. For have Credo inside your  project, you must add this `{:credo, "~> 1.2", only: [:dev, :test], runtime: false}` in your `mix.exs`.
 
-I consider that Credo must be in the starter setup because his recommendations are a good thing not only for have a standar code style, you can learn how to write better code: include `@moduledoc` in every module, set the correct spaces, don't missing `TODO` comments, etc.
+With `$ mix credo` you will have some advices and suggestions for refactor your code based on an [style guide](https://github.com/rrrene/elixir-style-guide). 
 
-## Automate Credo 
+## Automate Credo with Git Hooks
 
-I use to initialize a git repository in every software project. This allow me to take advantage of the [git hooks](https://www.google.com/search?q=git+hooks&oq=git+hooks&aqs=chrome..69i57j0l6j69i60.3675j0j1&sourceid=chrome&ie=UTF-8), I use to implement a `Pre Push Git Hook` with `Credo`, a shell script for run `mix credo` before to push the changes to the remote repository, if `Credo` have any issue, the push action will be rejected until there aren't any issue. 
+Use [git hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) is a great way for automate some tasks using **git**.
 
-For implement this, you'll need to have a file with this path `.git/hooks/pre-push` inside your `.git` directory
+Writing a shell script as `pre push` hook allow us to run credo every time when you are pushing your commits to your remote repository and stop the operation if there are any issue to solve. 
+
+Inside the mix project we need to create the file `.git/hooks/pre-push` with this content:
 
 ```
 #!/bin/sh
@@ -58,13 +60,12 @@ CREDO_RES=$?
 
 if [ $CREDO_RES -ge 1 ]; then
   echo "======================================="
-  echo "   Fix the credo suggestions  "
+  echo "   Fix the credo suggestions, Push Operation Stopped!  "
   exit $CREDO_RES
 fi
 if [ $CREDO_RES -le 9 ]; then CREDO_RES=" $CREDO_RES"; fi
   echo "======================================="
-  echo "There aren't Credo Issues, Push Continue.."
-  echo "======================================="
+  echo "There aren't Credo Issues, Push Operation Continue..."
 
 echo ""
 echo ""
@@ -75,7 +76,9 @@ exit 0
 
 ## GitHub 
 
-Recently GitHub launch the GitHub Actions for automate workflows, if you're using this, there are a GitHub Action for run mix commands in your repository: [Elixir Action](https://github.com/marketplace/actions/elixir-action)
+GitHub provides other tools for our elixir projects. 
 
-And if you want to have your dependencies updated, you can try the [dependabot](https://github.com/marketplace/dependabot-preview), this will check your dependencies versions and if he found any dependencie to update, he will open a Pull Request with the most updated version in your repository.
+There are a [GitHub Action](https://github.com/marketplace/actions/elixir-action) for run mix commands in your repository.
+
+Another useful tool is the [dependabot](https://github.com/marketplace/dependabot-preview) for keep your dependencies updated. 
 
